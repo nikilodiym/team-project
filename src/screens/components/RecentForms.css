@@ -1,0 +1,67 @@
+/* components/RecentForms/RecentForms.css */
+
+.recent-forms {
+  margin-top: 100px;
+  padding: 0 200px;
+  margin-bottom: 200px;
+}
+
+.recent-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  margin-bottom: 40px;
+}
+
+
+
+.recent-top h2 {
+  font-size: 20px;
+  font-weight: 400;
+}
+
+.recent-actions {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+}
+
+.recent-actions p {
+  font-size: 16px;
+  color: #3c4043;
+}
+
+.recent-icon {
+  width: 20px;
+  height: 20px;
+
+  color: #5f6368;
+  cursor: pointer;
+}
+
+.empty-block {
+  width: 100%;
+  height: 220px;
+
+  background: white;
+  border: 1px solid #dadce0;
+  border-radius: 4px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.empty-block h3 {
+  font-size: 25px;
+  font-weight: 400;
+
+  margin-bottom: 0px;
+}
+
+.empty-block p {
+  font-size: 20px;
+  color: #5f6368;
+}

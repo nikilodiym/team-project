@@ -1,0 +1,63 @@
+/* components/NewForm/NewForm.css */
+
+.new-form {
+  margin-top: 40px;
+  margin-left: 200px;
+}
+
+.new-form h2 {
+  font-size: 20px;
+  font-weight: 400;
+  margin-bottom: 30px;
+}
+
+.form-card {
+  width: 200px;
+  height: 150px;
+
+  background: white;
+  border: 1px solid #dadce0;
+  border-radius: 4px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  cursor: pointer;
+
+  transition: 0.2s;
+}
+
+.form-card:hover {
+  border-color: #673ab7;
+}
+
+.plus {
+  position: relative;
+  width: 70px;
+  height: 70px;
+}
+
+.vertical {
+  position: absolute;
+
+  width: 10px;
+  height: 70px;
+
+  background: #ea4335;
+
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.horizontal {
+  position: absolute;
+
+  width: 70px;
+  height: 10px;
+
+  background: #4285f4;
+
+  top: 50%;
+  transform: translateY(-50%);
+}
