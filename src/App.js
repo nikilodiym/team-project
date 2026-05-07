@@ -1,6 +1,7 @@
 import React from "react";
 import Header from "./components/Header";
 import Home from "./screens/Home";
+import FAQ from "./screens/FAQ/FAQ";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 function App(){
@@ -9,6 +10,7 @@ function App(){
             <Header />
             <Routes>
                 <Route path="/" element={<Home />} />
+                <Route path="/FAQ" element={<FAQ />} />
             </Routes>
         </BrowserRouter>
     );
