@@ -1,0 +1,283 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+}
+
+.editor {
+  min-height: 100vh;
+  padding: 40px;
+  background: #f3eefc;
+  font-family: "Inter", sans-serif;
+  color: #202124;
+}
+
+/* HEADER */
+
+.editor-header {
+  background: white;
+  border-radius: 18px;
+  padding: 30px;
+  margin-bottom: 28px;
+  border-top: 12px solid #673ab7;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.editor-header h1 {
+  margin: 0;
+  font-size: 30px;
+  font-weight: 500;
+}
+
+.editor-header p {
+  margin-top: 14px;
+  color: #5f6368;
+  font-size: 16px;
+}
+
+.close-btn {
+  border: none;
+  background: #ede7f6;
+  color: #673ab7;
+  padding: 12px 18px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: 0.2s;
+}
+
+.close-btn:hover {
+  background: #d1c4e9;
+}
+
+/* QUESTIONS */
+
+.questions {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* CARD */
+
+.question-card {
+  background: white;
+  border-radius: 18px;
+  padding: 26px;
+
+  display: flex;
+  justify-content: space-between;
+  gap: 30px;
+
+  border-left: 6px solid #4285f4;
+
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+
+  transition: 0.2s;
+}
+
+.question-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.12);
+}
+
+/* MAIN */
+
+.question-main {
+  flex: 1;
+}
+
+/* QUESTION INPUT */
+
+.question-input {
+  width: 100%;
+  border: none;
+  border-bottom: 2px solid #dadce0;
+  font-size: 21px;
+  padding: 10px 0;
+  margin-bottom: 28px;
+  outline: none;
+  transition: 0.2s;
+}
+
+.question-input:focus {
+  border-color: #673ab7;
+}
+
+/* OPTIONS */
+
+.options {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.option {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.option-circle {
+  width: 22px;
+  height: 22px;
+  border: 2px solid #9aa0a6;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.option-circle.active {
+  border: 6px solid #673ab7;
+  background: white;
+}
+
+.option-checkbox {
+  width: 22px;
+  height: 22px;
+  border: 2px solid #9aa0a6;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.option-checkbox.active {
+  background: #673ab7;
+  border-color: #673ab7;
+  position: relative;
+}
+
+.option-checkbox.active::after {
+  content: "✓";
+  position: absolute;
+  color: white;
+  font-size: 14px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.option input {
+  border: none;
+  border-bottom: 1px solid transparent;
+  padding: 8px 0;
+  width: 100%;
+  font-size: 14px;
+  outline: none;
+  transition: 0.2s;
+}
+
+.option input:focus {
+  border-color: #673ab7;
+}
+
+/* ADD OPTION */
+
+.add-option-btn {
+  width: fit-content;
+  margin-top: 10px;
+  border: none;
+  background: transparent;
+  color: #673ab7;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 15px;
+}
+
+.add-option-btn:hover {
+  text-decoration: underline;
+}
+
+/* TEXT ANSWER */
+
+.text-answer {
+  padding: 12px 0;
+  border-bottom: 1px dashed #c7c7c7;
+  color: #777;
+  width: 300px;
+}
+
+/* RIGHT TOOLS */
+
+.question-tools {
+  width: 240px;
+}
+
+.question-type {
+  width: 100%;
+  padding: 14px 16px;
+  border-radius: 12px;
+  border: 1px solid #dadce0;
+  font-size: 15px;
+  background: white;
+  cursor: pointer;
+  outline: none;
+}
+
+.question-type:focus {
+  border-color: #673ab7;
+}
+
+/* FOOTER */
+
+.question-footer {
+  margin-top: 30px;
+  padding-top: 18px;
+  border-top: 1px solid #ececec;
+
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.icon-btn {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-size: 18px;
+  transition: 0.2s;
+}
+
+.icon-btn:hover {
+  background: #f1f3f4;
+}
+
+/* FLOAT BUTTON */
+
+.add-question {
+  position: fixed;
+  right: 35px;
+  bottom: 35px;
+
+  width: 68px;
+  height: 68px;
+
+  border-radius: 50%;
+  border: none;
+
+  background: linear-gradient(135deg, #673ab7, #7e57c2);
+
+  color: white;
+  font-size: 38px;
+
+  cursor: pointer;
+
+  box-shadow: 0 12px 26px rgba(103, 58, 183, 0.35);
+
+  transition: 0.25s;
+}
+
+.add-question:hover {
+  transform: scale(1.08) rotate(90deg);
+}
