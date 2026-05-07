@@ -46,8 +46,9 @@ export default function Header() {
         </div>
 
         <nav className="sidebar-links">
+            <a href="/">Home</a>
           <a href="#">Features</a>
-          <a href="#">FAQ</a>
+          <a href="/FAQ">FAQ</a>
           <a href="#">Contact</a>
           <a href="#">Templates</a>
         </nav>
