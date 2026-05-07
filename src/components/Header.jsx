@@ -1,29 +1,57 @@
 import React, { useState } from "react";
 import "./Header.css";
+import { Menu, Search, Grid3X3, X } from "lucide-react";
 
 export default function Header() {
-    const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(false);
 
-    return (
-        <header className="header">
+  return (
+    <>
+      <header className="header">
+        <div className="header-left">
+          <Menu className="icon" onClick={() => setOpen(true)} />
 
-            <div className="burger" onClick={() => setOpen(!open)}>
-                <span></span>
-                <span></span>
-                <span></span>
-            </div>
-            <h1 className="header-logo"><a href="/">Форми</a></h1>
+          <div className="logo-block">
+            <div className="logo"></div>
 
-            <nav className={`header-nav ${open ? "open" : ""}`}>
-                <a href="/">Home</a>
-                <a href="/about">About</a>
-                <a href="/services">Blog</a>
-                <a href="/news">News</a>
-                <a href="" className="added-in-mobil-arrientation-block">Create</a>
-            </nav>
+            <h1>Форми</h1>
+          </div>
+        </div>
 
-            <button className="header-btn">*your account (icon)*</button>
+        <div className="search-block">
+          <Search className="search-icon" />
 
-        </header>
-    );
+          <input type="text" placeholder="Пошук" />
+        </div>
+
+        <div className="header-right">
+          <Grid3X3 className="icon" />
+
+          <img src="https://i.pravatar.cc/100" alt="avatar" />
+        </div>
+      </header>
+
+      {/* Overlay */}
+      <div
+        className={`overlay ${open ? "active" : ""}`}
+        onClick={() => setOpen(false)}
+      ></div>
+
+      {/* Sidebar */}
+      <div className={`sidebar ${open ? "open" : ""}`}>
+        <div className="sidebar-top">
+          <h2>Меню</h2>
+
+          <X className="close-icon" onClick={() => setOpen(false)} />
+        </div>
+
+        <nav className="sidebar-links">
+          <a href="#">Features</a>
+          <a href="#">FAQ</a>
+          <a href="#">Contact</a>
+          <a href="#">Templates</a>
+        </nav>
+      </div>
+    </>
+  );
 }

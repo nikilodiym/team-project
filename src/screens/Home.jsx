@@ -1,10 +1,12 @@
 import React from "react";
-import Header from "../components/Header";
+import NewForm from "./components/NewForm";
+import RecentForms from "./components/RecentForms";
 
 function Home() {
     return (
         <>
-            
+            <NewForm />
+            <RecentForms />
         </>
     )
 }
