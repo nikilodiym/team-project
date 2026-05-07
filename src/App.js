@@ -2,6 +2,7 @@ import React from "react";
 import Header from "./components/Header";
 import Home from "./screens/Home";
 import FAQ from "./screens/FAQ/FAQ";
+import Templates from "./screens/Templates/Templates";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 function App(){
@@ -11,6 +12,7 @@ function App(){
             <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/FAQ" element={<FAQ />} />
+                <Route path="/templates" element={<Templates />} />
             </Routes>
         </BrowserRouter>
     );
