@@ -50,7 +50,7 @@ export default function Header() {
           <a href="#">Features</a>
           <a href="/FAQ">FAQ</a>
           <a href="#">Contact</a>
-          <a href="#">Templates</a>
+          <a href="/templates">Templates</a>
         </nav>
       </div>
     </>
