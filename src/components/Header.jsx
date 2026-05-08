@@ -99,9 +99,9 @@ export default function Header() {
 
         <nav className="sidebar-links">
           <a href="/">Home</a>
-          <a href="#">Features</a>
+          <a href="/features">Features</a>
           <a href="/FAQ">FAQ</a>
-          <a href="#">Contact</a>
+          <a href="/contact">Contact</a>
           <a href="/templates">Templates</a>
         </nav>
       </div>

@@ -6,6 +6,8 @@ import FAQ from "./screens/FAQ/FAQ";
 import Templates from "./screens/Templates/Templates";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Settings from "./screens/ProfileSettings/Settings";
+import Features from "./screens/FeaturesPage/Features";
+import Contact from "./screens/ContactPage/Contact";
 
 function App() {
   return (
@@ -17,6 +19,8 @@ function App() {
         <Route path="/editor" element={<FormEditor />} />
         <Route path="/templates" element={<Templates />} />
         <Route path="/settings" element={<Settings />} />
+        <Route path="/features" element={<Features />} />
+        <Route path="/contact" element={<Contact />} />
       </Routes>
     </BrowserRouter>
   );
