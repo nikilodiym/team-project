@@ -8,6 +8,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Settings from "./screens/ProfileSettings/Settings";
 import Features from "./screens/FeaturesPage/Features";
 import Contact from "./screens/ContactPage/Contact";
+import Dashboard from "./screens/DashboardPage/Dashboard";
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
         <Route path="/settings" element={<Settings />} />
         <Route path="/features" element={<Features />} />
         <Route path="/contact" element={<Contact />} />
+        <Route path="/dashboard" element={<Dashboard />} />
       </Routes>
     </BrowserRouter>
   );

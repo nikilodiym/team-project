@@ -1,0 +1,51 @@
+.dashboard {
+  padding: 30px;
+  min-height: 100vh;
+  background: #f5f3ff;
+}
+
+.dashboard-header {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+}
+
+.dashboard-header img {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+}
+
+.stats {
+  display: flex;
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.card {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  flex: 1;
+}
+
+.forms-section {
+  margin-top: 30px;
+}
+
+.form-card {
+  background: white;
+  padding: 15px;
+  border-radius: 10px;
+  margin-bottom: 10px;
+}
+
+.form-card a {
+  display: inline-block;
+  margin-top: 8px;
+  color: #6c5ce7;
+  text-decoration: none;
+}
