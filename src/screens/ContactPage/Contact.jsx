@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import "./Contact.css";
-import { Mail, Phone, Send } from "lucide-react";
+import { Mail, Phone } from "lucide-react";
 
 export default function Contact() {
   const [form, setForm] = useState({
@@ -58,7 +58,6 @@ export default function Contact() {
           />
 
           <button type="submit">
-            <Send className="icon" />
             Надіслати
           </button>
         </form>
