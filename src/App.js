@@ -5,6 +5,7 @@ import Home from "./screens/Home";
 import FAQ from "./screens/FAQ/FAQ";
 import Templates from "./screens/Templates/Templates";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Settings from "./screens/ProfileSettings/Settings";
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
         <Route path="/FAQ" element={<FAQ />} />
         <Route path="/editor" element={<FormEditor />} />
         <Route path="/templates" element={<Templates />} />
+        <Route path="/settings" element={<Settings />} />
       </Routes>
     </BrowserRouter>
   );
