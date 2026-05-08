@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import "./FormEditor.css";
+import { saveFormToFirestore } from "../../firebase";
 
 export default function FormEditor({ onClose }) {
   const [questions, setQuestions] = useState([
@@ -67,12 +68,17 @@ export default function FormEditor({ onClose }) {
     setQuestions(newQ);
   };
 
+  const saveForm = async () => {
+    await saveFormToFirestore("Форма без назви", questions);
+  };
+
   return (
     <div className="editor">
       {/* HEADER */}
       <div className="editor-header">
         <div>
           <h1>Форма без назви</h1>
+
           <p>Опис форми</p>
         </div>
 
@@ -141,6 +147,10 @@ export default function FormEditor({ onClose }) {
                 </button>
 
                 <button className="icon-btn">📄</button>
+
+                <button className="save-btn" onClick={saveForm}>
+                  Save Form
+                </button>
               </div>
             </div>
 
@@ -151,13 +161,18 @@ export default function FormEditor({ onClose }) {
                 value={q.type}
                 onChange={(e) => {
                   const newQ = [...questions];
+
                   newQ[i].type = e.target.value;
+
                   newQ[i].correctAnswers = [];
+
                   setQuestions(newQ);
                 }}
               >
                 <option value="radio">Один варіант</option>
+
                 <option value="checkbox">Кілька варіантів</option>
+
                 <option value="text">Текст</option>
               </select>
             </div>
