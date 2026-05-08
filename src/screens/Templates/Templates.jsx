@@ -8,36 +8,36 @@ const formTemplates = [
     title: "Форма контакту",
     description: "Простий спосіб зв'язатися з вами",
     icon: Mail,
-    fields: ["Ім'я", "Email", "Тема", "Повідомлення"]
+    fields: ["Ім'я", "Email", "Тема", "Повідомлення"],
   },
   {
     id: 2,
     title: "Реєстрація",
     description: "Реєстрація нового користувача",
     icon: UserCheck,
-    fields: ["Ім'я", "Email", "Пароль", "Підтвердження пароля"]
+    fields: ["Ім'я", "Email", "Пароль", "Підтвердження пароля"],
   },
   {
     id: 3,
     title: "Форма зворотного зв'язку",
     description: "Отримуйте відгуки від користувачів",
     icon: Clipboard,
-    fields: ["Оцінка", "Коментар", "Email (опційно)"]
+    fields: ["Оцінка", "Коментар", "Email (опційно)"],
   },
   {
     id: 4,
     title: "Опитування",
     description: "Збирайте дані опитування",
     icon: FileText,
-    fields: ["Питання 1", "Питання 2", "Питання 3", "Коментарі"]
+    fields: ["Питання 1", "Питання 2", "Питання 3", "Коментарі"],
   },
   {
     id: 5,
     title: "Підписка на розсилку",
     description: "Збирайте адреси електронної пошти",
     icon: Newspaper,
-    fields: ["Email", "Тип розсилки"]
-  }
+    fields: ["Email", "Тип розсилки"],
+  },
 ];
 
 export default function Templates() {
@@ -151,7 +151,10 @@ export default function Templates() {
               {selectedTemplate.fields.map((field) => (
                 <label key={field} className="template-modal-field">
                   <span>{field}</span>
-                  <input type="text" placeholder={`Введіть ${field.toLowerCase()}`} />
+                  <input
+                    type="text"
+                    placeholder={`Введіть ${field.toLowerCase()}`}
+                  />
                 </label>
               ))}
             </div>
@@ -164,14 +167,15 @@ export default function Templates() {
               >
                 Скасувати
               </button>
-
-              <button
-                type="button"
-                className="template-modal-primary"
-                onClick={handleCreateForm}
-              >
-                Створити форму
-              </button>
+              <a href="/editor">
+                <button
+                  type="button"
+                  className="template-modal-primary"
+                  onClick={handleCreateForm}
+                >
+                  Створити форму
+                </button>
+              </a>
             </div>
           </div>
         </div>
