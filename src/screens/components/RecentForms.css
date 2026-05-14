@@ -65,3 +65,48 @@
   font-size: 20px;
   color: #5f6368;
 }
+
+
+.recent-forms-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 20px;
+  padding: 20px 0;
+}
+
+.recent-form-card {
+  text-decoration: none;
+  color: inherit;
+  border: 1px solid #dadce0;
+  border-radius: 8px;
+  overflow: hidden;
+  transition: border 0.3s;
+}
+
+.recent-form-card:hover {
+  border: 1px solid #7047eb;
+}
+
+.card-preview {
+  height: 140px;
+  background-color: #f1f3f4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 40px;
+}
+
+.card-info {
+  padding: 12px;
+}
+
+.card-info h4 {
+  margin: 0;
+  font-size: 14px;
+  color: #202124;
+}
+
+.last-opened {
+  font-size: 12px;
+  color: #70757a;
+}

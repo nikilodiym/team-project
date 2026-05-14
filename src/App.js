@@ -18,6 +18,9 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/FAQ" element={<FAQ />} />
+        {/* Додаємо :id, щоб React розумів динамічні посилання */}
+        <Route path="/editor/:id" element={<FormEditor />} />
+        {/* Маршрут для створення нової форми */}
         <Route path="/editor" element={<FormEditor />} />
         <Route path="/templates" element={<Templates />} />
         <Route path="/settings" element={<Settings />} />

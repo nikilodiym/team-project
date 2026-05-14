@@ -1,28 +1,57 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./FormEditor.css";
-import { saveFormToFirestore } from "../../firebase";
+import { db, saveFormToFirestore } from "../../firebase";
+import { useParams, useNavigate } from "react-router-dom"; // Додай цей імпорт
+import { doc, getDoc, updateDoc } from "firebase/firestore";
 
 export default function FormEditor({ onClose }) {
-  const [questions, setQuestions] = useState([
-    {
-      title: "",
-      type: "radio",
-      options: ["Варіант 1"],
-      correctAnswers: [],
-    },
-  ]);
+  const { id } = useParams();
+  const navigate = useNavigate(); // Для перенаправлення після збереження
+  const [formTitle, setFormTitle] = useState("Форма без назви");
+  const [questions, setQuestions] = useState([]);
+  useEffect(() => {
+    const fetchForm = async () => {
+      if (id) {
+        const docRef = doc(db, "forms", id);
+        const docSnap = await getDoc(docRef);
 
-  const addQuestion = () => {
-    setQuestions([
-      ...questions,
-      {
-        title: "",
-        type: "radio",
-        options: ["Варіант 1"],
-        correctAnswers: [],
-      },
-    ]);
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+          setFormTitle(data.title || "Форма без назви");
+          setQuestions(data.questions || []);
+        }
+      } else {
+        // Дефолтне питання для нової форми
+        setQuestions([
+          { title: "", type: "radio", options: ["Варіант 1"], correctAnswers: [] }
+        ]);
+      }
+    };
+    fetchForm();
+  }, [id]);
+
+  // Функція для збереження або оновлення
+  const saveForm = async () => {
+    try {
+      if (id) {
+        // ОНОВЛЕННЯ існуючої форми
+        const docRef = doc(db, "forms", id);
+        await updateDoc(docRef, {
+          title: formTitle,
+          questions: questions
+        });
+        alert("Зміни збережено!");
+      } else {
+        // СТВОРЕННЯ нової форми
+        await saveFormToFirestore(formTitle, questions);
+        alert("Форму створено!");
+      }
+      navigate("/"); // Повертаємось на головну
+    } catch (error) {
+      console.error("Помилка при збереженні:", error);
+    }
   };
+  
 
   const updateTitle = (value, index) => {
     const newQ = [...questions];
@@ -68,25 +97,27 @@ export default function FormEditor({ onClose }) {
     setQuestions(newQ);
   };
 
-  const saveForm = async () => {
-    await saveFormToFirestore("Форма без назви", questions);
-  };
+  
 
   return (
     <div className="editor">
       {/* HEADER */}
       <div className="editor-header">
-        <div>
-          <h1>Форма без назви</h1>
-
+        <div className="title-section">
+          <input 
+            type="text" 
+            className="form-title-input" 
+            value={formTitle} 
+            onChange={(e) => setFormTitle(e.target.value)}
+            placeholder="Назва форми"
+          />
           <p>Опис форми</p>
         </div>
 
-        <a href="/">
-          <button className="close-btn" onClick={onClose}>
-            Закрити
-          </button>
-        </a>
+        <button className="close-btn" onClick={() => navigate("/")}>
+          Закрити
+        </button>
+          
       </div>
 
       {/* QUESTIONS */}
@@ -99,7 +130,11 @@ export default function FormEditor({ onClose }) {
                 className="question-input"
                 placeholder="Запитання без назви"
                 value={q.title}
-                onChange={(e) => updateTitle(e.target.value, i)}
+                onChange={(e) => {
+                  const newQ = [...questions];
+                  newQ[i].title = e.target.value;
+                  setQuestions(newQ);
+                }}
               />
 
               {q.type !== "text" && (
@@ -142,14 +177,14 @@ export default function FormEditor({ onClose }) {
 
               {/* FOOTER */}
               <div className="question-footer">
-                <button className="icon-btn" onClick={() => deleteQuestion(i)}>
+                <button className="icon-btn" onClick={() => {
+                   const newQ = questions.filter((_, idx) => idx !== i);
+                   setQuestions(newQ);
+                }}>
                   🗑️
                 </button>
-
-                <button className="icon-btn">📄</button>
-
                 <button className="save-btn" onClick={saveForm}>
-                  Save Form
+                  Зберегти все
                 </button>
               </div>
             </div>
@@ -181,7 +216,7 @@ export default function FormEditor({ onClose }) {
       </div>
 
       {/* FLOAT BUTTON */}
-      <button className="add-question" onClick={addQuestion}>
+      <button className="add-question" onClick={() => setQuestions([...questions, { title: "", type: "radio", options: ["Варіант 1"], correctAnswers: [] }])}>
         +
       </button>
     </div>
