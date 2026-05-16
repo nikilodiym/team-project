@@ -2,33 +2,64 @@ import React, { useCallback, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import "./Dashboard.css";
 import { useAuth } from "../../context/AuthContext";
-import { getForms } from "../../api/forms";
+
+// Додано пропущені імпорти для Firestore та бази даних
+import { db } from "../../firebase"; 
+import { collection, query, where, getDocs } from "firebase/firestore";
 
 export default function Dashboard() {
+  // Використовуємо готові дані з вашого контексту
   const { user, isAuthenticated, loading: authLoading } = useAuth();
   const [forms, setForms] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const fetchForms = useCallback(async () => {
-    if (!isAuthenticated) return;
+  // Перетворили на правильний useCallback
+  const fetchForms = useCallback(async (uid) => {
+    if (!uid) return;
+    
     try {
-      const data = await getForms({ sortBy: "createdAt", sortDir: "desc" });
+      setLoading(true);
+      // Первинний запит: ownerId (нові документи)
+      const q = query(collection(db, "forms"), where("ownerId", "==", uid));
+      let snap = await getDocs(q);
+      console.log("📋 Dashboard found by ownerId:", snap.docs.length);
+
+      // Фолбек: якщо старих користувачів записано через userId
+      if (snap.empty) {
+        const q2 = query(collection(db, "forms"), where("userId", "==", uid));
+        const snap2 = await getDocs(q2);
+        console.log("📋 Dashboard found by userId:", snap2.docs.length);
+        snap = snap2;
+      }
+
+      const data = snap.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+
       setForms(data);
     } catch (err) {
       console.error("Error loading forms:", err);
     } finally {
       setLoading(false);
     }
-  }, [isAuthenticated]);
+  }, []);
 
+  // Один чистий useEffect для синхронізації стану авторизації та завантаження даних
   useEffect(() => {
     if (!authLoading) {
-      fetchForms();
+      if (isAuthenticated && user?.uid) {
+        fetchForms(user.uid);
+      } else {
+        setLoading(false); // Якщо не авторизований, вимикаємо loader
+      }
     }
-  }, [authLoading, fetchForms]);
+  }, [authLoading, isAuthenticated, user, fetchForms]);
 
+  // Спільний стан завантаження
   if (authLoading || loading) return <div className="dashboard">Loading...</div>;
 
+  // Перевірка на авторизацію
   if (!isAuthenticated) {
     return (
       <div className="dashboard">
@@ -38,7 +69,8 @@ export default function Dashboard() {
     );
   }
 
-  const avatarUrl = user?.photoUrl;
+  // Виправлено photoUrl -> photoURL
+  const avatarUrl = user?.photoURL;
   const displayName = user?.displayName || user?.email;
 
   return (
@@ -47,7 +79,9 @@ export default function Dashboard() {
         {avatarUrl ? (
           <img src={avatarUrl} alt="avatar" />
         ) : (
-          <div className="dashboard-avatar-placeholder">{displayName?.[0]?.toUpperCase()}</div>
+          <div className="dashboard-avatar-placeholder">
+            {displayName?.[0]?.toUpperCase()}
+          </div>
         )}
         <div>
           <h2>{displayName}</h2>

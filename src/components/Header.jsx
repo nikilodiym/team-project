@@ -1,24 +1,85 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react"; // Додано useEffect
+import { Link } from "react-router-dom"; // Додано Link
 import "./Header.css";
 import { Menu, Search, Grid3X3, X } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
 import logo from "../assets/Google_Forms_logo_(2014-2020).svg.png";
-import { useAuth } from "../context/AuthContext";
+import { auth, loginWithGoogle, logout, db } from "../firebase";
+
+import { onAuthStateChanged } from "firebase/auth";
+import { collection, getDocs, query, where } from "firebase/firestore";
 
 export default function Header() {
   const [open, setOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
-  const { user, logout, isAuthenticated } = useAuth();
-  const navigate = useNavigate();
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState([]);
+  const [forms, setForms] = useState([]);
 
-  const handleLogout = async () => {
-    await logout();
-    setProfileOpen(false);
-    navigate("/");
+  const [user, setUser] = useState(null);
+
+  // Виводимо змінні користувача безпосередньо зі стану user
+  const isAuthenticated = !!user;
+  const avatarUrl = user?.photoURL;
+  const displayName = user?.displayName;
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+      setUser(currentUser);
+
+      if (currentUser) {
+        await fetchUserForms(currentUser.uid);
+      }
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  const fetchUserForms = async (uid) => {
+    try {
+      const q = query(collection(db, "forms"), where("ownerId", "==", uid));
+      const snap = await getDocs(q);
+
+      const data = snap.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+
+      setForms(data);
+    } catch (err) {
+      console.log("Error loading forms:", err);
+    }
   };
 
-  const avatarUrl = user?.photoUrl;
-  const displayName = user?.displayName || user?.email;
+  const handleSearch = (value) => {
+    setSearchQuery(value);
+
+    if (value.trim() === "") {
+      setSearchResults([]);
+    } else {
+      const results = forms.filter(
+        (form) =>
+          form.title?.toLowerCase().includes(value.toLowerCase()) ||
+          form.description?.toLowerCase().includes(value.toLowerCase())
+      );
+      setSearchResults(results.slice(0, 5));
+    }
+  };
+
+  const handleSelectResult = (formId) => {
+    window.location.href = `/editor/${formId}`;
+    setSearchQuery("");
+    setSearchResults([]);
+  };
+
+  // Додано функцію для логауту
+  const handleLogout = async () => {
+    try {
+      await logout();
+      setProfileOpen(false);
+    } catch (err) {
+      console.error("Помилка під час виходу:", err);
+    }
+  };
 
   return (
     <>
@@ -36,7 +97,30 @@ export default function Header() {
 
         <div className="search-block">
           <Search className="search-icon" />
-          <input type="text" placeholder="Пошук" />
+
+          <input
+            type="text"
+            placeholder="Пошук"
+            value={searchQuery}
+            onChange={(e) => handleSearch(e.target.value)}
+          />
+
+          {searchResults.length > 0 && (
+            <div className="search-results">
+              {searchResults.map((form) => (
+                <div
+                  key={form.id}
+                  className="search-result-item"
+                  onClick={() => handleSelectResult(form.id)}
+                >
+                  <div>
+                    <h4>{form.title}</h4>
+                    <p>{form.description}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
 
         <div className="header-right">
@@ -68,9 +152,15 @@ export default function Header() {
               {profileOpen && (
                 <div className="profile-menu">
                   <div className="profile-info">
-                    {avatarUrl ? <img src={avatarUrl} alt="" /> : <div className="avatar avatar-placeholder">{displayName?.[0]}</div>}
+                    {avatarUrl ? (
+                      <img src={avatarUrl} alt="" />
+                    ) : (
+                      <div className="avatar avatar-placeholder">
+                        {displayName?.[0] || "U"}
+                      </div>
+                    )}
                     <div>
-                      <h4>{displayName}</h4>
+                      <h4>{displayName || "Користувач"}</h4>
                       <p>{user?.email}</p>
                     </div>
                   </div>
@@ -98,7 +188,10 @@ export default function Header() {
         </div>
       </header>
 
-      <div className={`overlay ${open ? "active" : ""}`} onClick={() => setOpen(false)} />
+      <div
+        className={`overlay ${open ? "active" : ""}`}
+        onClick={() => setOpen(false)}
+      />
 
       <div className={`sidebar ${open ? "open" : ""}`}>
         <div className="sidebar-top">

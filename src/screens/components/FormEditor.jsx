@@ -1,51 +1,99 @@
 import React, { useState, useEffect, useRef } from "react";
 import "./FormEditor.css";
-import { useParams, useNavigate, Link } from "react-router-dom";
-import { useAuth } from "../../context/AuthContext";
-import { getForm, createForm, updateForm, uploadThumbnail } from "../../api/forms";
-import { apiFormToEditor, editorToApiPayload, defaultQuestion } from "../../utils/formMapper";
+import { uploadImageToFirebase, db, saveFormToFirestore } from "../../firebase";
+import { useParams, useNavigate } from "react-router-dom"; 
+import { doc, getDoc, updateDoc } from "firebase/firestore";
+import { useAuth } from "../../context/AuthContext"; // Додано імпорт контексту
 
 export default function FormEditor() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { isAuthenticated } = useAuth();
-  const fileInputRef = useRef(null);
+  const { isAuthenticated } = useAuth(); // Отримуємо статус авторизації
 
+  // Відновлені стейти, які зникли під час мержу
   const [formTitle, setFormTitle] = useState("Форма без назви");
-  const [description, setDescription] = useState("");
-  const [thumbnailUrl, setThumbnailUrl] = useState(null);
-  const [questions, setQuestions] = useState([defaultQuestion()]);
-  const [loading, setLoading] = useState(!!id);
-  const [saving, setSaving] = useState(false);
-  const [uploading, setUploading] = useState(false);
+  const [description, setDescription] = useState(""); 
+  const [formBanner, setFormBanner] = useState("");
+  const [thumbnailUrl, setThumbnailUrl] = useState(""); 
+  const [questions, setQuestions] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false); 
+  const [uploading, setUploading] = useState(false); 
+
+  const fileInputRef = useRef(null); // Відновлено реф для прев'ю
+
+  // Хелпер для створення дефолтного питання
+  const defaultQuestion = () => ({
+    title: "",
+    type: "radio",
+    options: ["Варіант 1"],
+    correctAnswers: []
+  });
 
   useEffect(() => {
-    if (!isAuthenticated) return;
-
     const fetchForm = async () => {
-      if (!id) {
-        setQuestions([defaultQuestion()]);
-        setLoading(false);
-        return;
-      }
+      if (id) {
+        const docRef = doc(db, "forms", id);
+        const docSnap = await getDoc(docRef);
 
-      try {
-        const form = await getForm(id);
-        const editor = apiFormToEditor(form);
-        setFormTitle(editor.title);
-        setDescription(editor.description);
-        setThumbnailUrl(editor.thumbnailUrl);
-        setQuestions(editor.questions.length ? editor.questions : [defaultQuestion()]);
-      } catch {
-        alert("Форму не знайдено або доступ заборонено");
-        navigate("/");
-      } finally {
-        setLoading(false);
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+          setFormTitle(data.title || "Форма без назви");
+          setDescription(data.description || "");
+          setFormBanner(data.banner || "");
+          setThumbnailUrl(data.thumbnailUrl || "");
+          setQuestions(data.questions || []);
+        }
+      } else {
+        // Дефолтне питання для нової форми
+        setQuestions([defaultQuestion()]);
       }
+      setLoading(false);
     };
 
     fetchForm();
-  }, [id, isAuthenticated, navigate]);
+  }, [id]);
+
+  // Виправлено помилку з File -> file
+  const validationSizeImage = async (file, path) => {
+    const maxSize = 2 * 1024 * 1024; // 2MB
+    if (file.size > maxSize) {
+      alert("Розмір зображення не повинен перевищувати 2MB.");
+      return false;
+    }
+    return await uploadImageToFirebase(file, path);
+  };
+
+  const handleBannerChange = async (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const url = await validationSizeImage(file, "banners");
+      if (url) setFormBanner(url);
+    }
+  };
+
+  // Додано пропущену функцію для зміни мініатюри (thumbnail)
+  const handleThumbnailChange = async (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setUploading(true);
+      const url = await validationSizeImage(file, "thumbnails");
+      if (url) setThumbnailUrl(url);
+      setUploading(false);
+    }
+  };
+
+  const handleQuestionImageChange = async (e, index) => {
+    const file = e.target.files[0];
+    if (file) {
+      const url = await validationSizeImage(file, "questions");
+      if (url) {
+        const newQ = [...questions];
+        newQ[index].image = url;
+        setQuestions(newQ);
+      }
+    }
+  };
 
   const saveForm = async () => {
     if (!isAuthenticated) {
@@ -54,38 +102,33 @@ export default function FormEditor() {
     }
 
     setSaving(true);
-    const payload = editorToApiPayload(formTitle, description, questions);
 
     try {
       if (id) {
-        await updateForm(id, payload);
+        // ОНОВЛЕННЯ існуючої форми
+        const docRef = doc(db, "forms", id);
+        await updateDoc(docRef, {
+          title: formTitle,
+          description: description,
+          banner: formBanner,
+          thumbnailUrl: thumbnailUrl,
+          questions: questions
+        });
         alert("Зміни збережено!");
       } else {
-        const created = await createForm(payload);
+        // СТВОРЕННЯ нової форми (додано запис у змінну created для отримання id)
+        const created = await saveFormToFirestore(formTitle, questions, formBanner, description, thumbnailUrl);
         alert("Форму створено!");
-        navigate(`/editor/${created.id}`, { replace: true });
-        return;
+        if (created?.id) {
+          navigate(`/editor/${created.id}`, { replace: true });
+        } else {
+          navigate("/");
+        }
       }
     } catch (err) {
       alert(err.message || "Помилка збереження");
     } finally {
       setSaving(false);
-    }
-  };
-
-  const handleThumbnailChange = async (e) => {
-    const file = e.target.files?.[0];
-    if (!file || !id) return;
-
-    setUploading(true);
-    try {
-      const result = await uploadThumbnail(id, file);
-      setThumbnailUrl(result.thumbnailUrl);
-    } catch (err) {
-      alert(err.message || "Не вдалося завантажити зображення");
-    } finally {
-      setUploading(false);
-      e.target.value = "";
     }
   };
 
@@ -118,21 +161,24 @@ export default function FormEditor() {
     setQuestions(newQ);
   };
 
-  if (!isAuthenticated) {
-    return (
-      <div className="editor editor-guest">
-        <p>Увійдіть, щоб створювати та редагувати форми.</p>
-        <Link to="/login">Увійти</Link>
-      </div>
-    );
-  }
-
   if (loading) {
-    return <div className="editor">Завантаження...</div>;
+    return <div className="loading">Завантаження...</div>;
   }
 
   return (
     <div className="editor">
+      <div className="banner-upload-section">
+        {formBanner && <img src={formBanner} alt="Banner" className="form-banner-preview" />}
+        <label className="upload-label">
+          {formBanner ? "🔄 Змінити банер" : "🖼️ Додати банер форми"}
+          <input type="file" accept="image/*" onChange={handleBannerChange} style={{ display: "none" }} />
+        </label>
+        {formBanner && (
+          <button className="delete-img-btn" onClick={() => setFormBanner("")}>Видалити банер</button>
+        )}
+      </div>
+
+      {/* HEADER */}
       <div className="editor-header">
         <div className="title-section">
           <input
@@ -167,7 +213,7 @@ export default function FormEditor() {
                 onClick={() => fileInputRef.current?.click()}
                 disabled={uploading}
               >
-                {uploading ? "Завантаження..." : thumbnailUrl ? "Змінити зображення" : "Додати зображення (Azure)"}
+                {uploading ? "Завантаження..." : thumbnailUrl ? "Змінити зображення" : "Додати зображення"}
               </button>
             </div>
           )}
@@ -192,6 +238,21 @@ export default function FormEditor() {
                   setQuestions(newQ);
                 }}
               />
+              <label className="icon-btn-upload">
+                📷 Додати фото
+                <input type="file" accept="image/*" onChange={(e) => handleQuestionImageChange(e, i)} style={{ display: "none" }} />
+              </label>
+
+              {q.image && (
+                <div className="question-image-container">
+                  <img src={q.image} alt="Question" className="question-img-preview" />
+                  <button className="delete-img-btn" onClick={() => {
+                    const newQ = [...questions];
+                    newQ[i].image = "";
+                    setQuestions(newQ);
+                  }}>Видалити фото</button>
+                </div>
+              )}
 
               {q.type !== "text" && (
                 <div className="options">

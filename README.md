@@ -1,70 +1,212 @@
-# Getting Started with Create React App
+# 📋 Google Forms
+> Веб-застосунок для створення, редагування та розповсюдження інтернет-форм (опитування, реєстраційні форми, збір відповідей)
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+---
 
-## Available Scripts
+## 🚀 1. Опис проєкту
 
-In the project directory, you can run:
+**Назва:** Team Forms  
+**Ідея:** веб-застосунок для створення форм, збору відповідей та перегляду результатів  
+**Мета:** дати простий інструмент для швидкого створення форм і аналізу даних  
+**Аудиторія:** викладачі, HR, організатори подій, малі команди
 
-### `npm start`
+---
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## 🎯 2. Проблема та мета
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+### ❗ Проблема
+Бракує простих інструментів для створення форм без складних налаштувань або платних сервісів.
 
-### `npm test`
+### 📌 Актуальність
+Швидкий збір даних (реєстрації, опитування, фідбек) стає критично важливим.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### ✅ Результат
+Готовий веб-застосунок для:
+- створення форм
+- збору відповідей
+- перегляду аналітики
 
-### `npm run build`
+---
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## ⚙️ 3. Вимоги до системи
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### 🧩 Функціональні вимоги
+- Реєстрація / авторизація (email, OAuth)
+- Створення / редагування / видалення форм
+- Типи полів:
+  - текст
+  - paragraph
+  - radio
+  - checkbox
+  - дата / рейтинг
+- Чернетки + публікація
+- Унікальні URL форм
+- Збір відповідей
+- Dashboard зі статистикою
+- Експорт CSV / JSON
+- Права доступу (public / private / team)
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+---
 
-### `npm run eject`
+### 🛡️ Нефункціональні вимоги
+- ⏱ швидкість відповіді: ≤ 500 мс
+- 🔐 безпека (bcrypt, XSS, CSRF protection)
+- 📦 масштабованість
+- 💾 резервне копіювання
+- 📱 responsive UI
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+---
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+### 🧱 Технології
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+| Рівень | Технології |
+|--------|------------|
+| Frontend | React |
+| Backend | Node.js / Firebase |
+| DB | Firestore / PostgreSQL |
+| Hosting | Vercel / AWS / Azure |
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+---
 
-## Learn More
+## 🧠 4. Функціональні можливості
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+- Drag & drop конструктор форм
+- Шаблони форм
+- Публікація через link / embed
+- Збір відповідей
+- Аналітика (графіки, таблиці)
+- Експорт даних
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+---
 
-### Code Splitting
+## 👤 5. User Stories
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+### 📌 Приклад сценарію
 
-### Analyzing the Bundle Size
+1. Логін / реєстрація
+2. Створення нової форми
+3. Додавання полів
+4. Публікація форми
+5. Розсилка посилання
+6. Перегляд результатів
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+---
 
-### Making a Progressive Web App
+## 🏗️ 6. Архітектура
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+Client (React)
+↓
+API (REST / Firebase)
+↓
+Database (Firestore / PostgreSQL)
 
-### Advanced Configuration
+---
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+### 📁 Структура проєкту
 
-### Deployment
+src/ → frontend
+public/ → static files
+docs/ → documentation
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+<img width="1408" height="768" alt="image" src="https://github.com/user-attachments/assets/8edc8154-2d9e-4999-9784-60131b410c6f" />
 
-### `npm run build` fails to minify
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+---
+
+## 🗄️ 7. База даних
+
+### 🔥 Firestore
+- users
+- forms
+- responses
+
+### 🐘 PostgreSQL
+- users
+- forms
+- fields
+- responses
+- answers
+
+---
+
+## 🔌 8. API
+
+| Method | Endpoint |
+|--------|---------|
+| POST | /api/auth/register |
+| POST | /api/auth/login |
+| GET | /api/forms |
+| POST | /api/forms |
+| GET | /api/forms/:id |
+| PUT | /api/forms/:id |
+| DELETE | /api/forms/:id |
+| POST | /api/forms/:id/responses |
+| GET | /api/forms/:id/responses |
+
+---
+
+## 🧪 9. Тестування
+
+- Unit tests
+- Integration tests
+- E2E tests (Cypress)
+
+### Сценарії:
+- реєстрація користувача
+- створення форми
+- відправка відповіді
+
+---
+
+## 👥 10. Команда
+
+| Роль | Ім’я |
+|------|-----|
+| Team Lead / Frontend | Нікіта |
+| Backend | Максим |
+| Hosting | Артем |
+| Docs / Testing | Дарина |
+| Frontend | Валерія |
+
+---
+
+## 🧭 11. Git workflow
+
+### 🌿 Branches
+- master
+- feature/*
+- fix/*
+
+### 💬 Commit style
+
+feat(frontend): add form builder
+fix(api): resolve auth bug
+
+
+---
+
+## 📊 12. Sprint plan
+
+- Sprint 1 → auth + forms editor
+- Sprint 2 → responses + dashboard
+- Sprint 3 → analytics + bugfix
+
+⏱ 1 sprint = 1 week
+
+---
+
+## 🚀 13. Deployment
+
+- Frontend → Vercel / Netlify
+- Backend → Firebase / AWS / Azure
+- DB → Firestore / PostgreSQL
+
+---
+
+## 📦 14. Setup
+
+```bash
+git clone <repo-url>
+cd team-project
+npm install
+npm start
