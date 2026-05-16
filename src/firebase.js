@@ -14,6 +14,9 @@ import {
   signOut,
 } from "firebase/auth";
 
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+
+
 const firebaseConfig = {
   apiKey: "AIzaSyBJR4kk1GuaDLoTp-ALsdK4pdGHGkK9Pjg",
   authDomain: "form-1b40f.firebaseapp.com",
@@ -29,6 +32,7 @@ const app = initializeApp(firebaseConfig);
 export const db = getFirestore(app);
 
 export const auth = getAuth(app);
+export const storage = getStorage(app);
 
 export const provider = new GoogleAuthProvider();
 
@@ -40,11 +44,26 @@ export const logout = () => {
   return signOut(auth);
 };
 
+export const uploadImageToFirebase = async (file, path) => {
+  if (!file) return null;
+  try{
+    const storageRef = ref(storage, `${path}/${Date.now()}_${file.name}`);
+    const snapshot = await uploadBytes(storageRef, file);
+    return await getDownloadURL(snapshot.ref);
+  }catch(error){
+    console.error("Image upload error:", error);
+    return null;
+  }
+  
+}
+
+
 // SAVE FORM FUNCTION
 
 export const saveFormToFirestore = async (
   formTitle,
-  questions
+  questions,
+  formBanner = ""
 ) => {
   try {
     const user = auth.currentUser;
@@ -56,6 +75,7 @@ export const saveFormToFirestore = async (
 
     await addDoc(collection(db, "forms"), {
       title: formTitle,
+      banner: formBanner,
       questions: questions,
 
       // Keep legacy userId and add ownerId for new queries

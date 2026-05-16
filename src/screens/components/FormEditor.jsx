@@ -1,14 +1,19 @@
 import React, { useState, useEffect } from "react";
 import "./FormEditor.css";
-import { db, saveFormToFirestore } from "../../firebase";
-import { useParams, useNavigate } from "react-router-dom"; // Додай цей імпорт
+import { uploadImageToFirebase, db, saveFormToFirestore } from "../../firebase";
+import { useParams, useNavigate } from "react-router-dom"; 
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 
 export default function FormEditor({ onClose }) {
   const { id } = useParams();
   const navigate = useNavigate(); // Для перенаправлення після збереження
+
   const [formTitle, setFormTitle] = useState("Форма без назви");
+  const [formBanner, setFormBanner] = useState("");
   const [questions, setQuestions] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+
   useEffect(() => {
     const fetchForm = async () => {
       if (id) {
@@ -18,6 +23,7 @@ export default function FormEditor({ onClose }) {
         if (docSnap.exists()) {
           const data = docSnap.data();
           setFormTitle(data.title || "Форма без назви");
+          setFormBanner(data.banner || "");
           setQuestions(data.questions || []);
         }
       } else {
@@ -26,9 +32,41 @@ export default function FormEditor({ onClose }) {
           { title: "", type: "radio", options: ["Варіант 1"], correctAnswers: [] }
         ]);
       }
+      setLoading(false);
     };
     fetchForm();
   }, [id]);
+
+  const validationSizeImage = async (file, path) =>{
+    const maxSize = 2 * 1024 * 1024; // 2MB
+    if (file.size > maxSize) {
+      alert("Розмір зображення не повинен перевищувати 2MB.");
+      return false;
+    }
+    return await uploadImageToFirebase(File, path);
+
+  }
+
+  const handleBannerChange = async (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const url = await validationSizeImage(file, "banners");
+      if (url) setFormBanner(url);
+    }
+
+    };
+
+  const handleQuestionImageChange = async (e, index) => {
+    const file = e.target.files[0];
+    if (file) {
+      const url = await validationSizeImage(file, "questions");
+      if (url) {
+        const newQ = [...questions];
+        newQ[index].image = url;
+        setQuestions(newQ);
+      }
+    }
+  };
 
   // Функція для збереження або оновлення
   const saveForm = async () => {
@@ -38,12 +76,13 @@ export default function FormEditor({ onClose }) {
         const docRef = doc(db, "forms", id);
         await updateDoc(docRef, {
           title: formTitle,
+          banner: formBanner,
           questions: questions
         });
         alert("Зміни збережено!");
       } else {
         // СТВОРЕННЯ нової форми
-        await saveFormToFirestore(formTitle, questions);
+        await saveFormToFirestore(formTitle, questions, formBanner);
         alert("Форму створено!");
       }
       navigate("/"); // Повертаємось на головну
@@ -53,11 +92,11 @@ export default function FormEditor({ onClose }) {
   };
   
 
-  const updateTitle = (value, index) => {
-    const newQ = [...questions];
-    newQ[index].title = value;
-    setQuestions(newQ);
-  };
+  // const updateTitle = (value, index) => {
+  //   const newQ = [...questions];
+  //   newQ[index].title = value;
+  //   setQuestions(newQ);
+  // };
 
   const updateOption = (qIndex, optIndex, value) => {
     const newQ = [...questions];
@@ -71,10 +110,10 @@ export default function FormEditor({ onClose }) {
     setQuestions(newQ);
   };
 
-  const deleteQuestion = (index) => {
-    const newQ = questions.filter((_, i) => i !== index);
-    setQuestions(newQ);
-  };
+  // const deleteQuestion = (index) => {
+  //   const newQ = questions.filter((_, i) => i !== index);
+  //   setQuestions(newQ);
+  // };
 
   const toggleCorrectAnswer = (qIndex, optIndex) => {
     const newQ = [...questions];
@@ -98,9 +137,21 @@ export default function FormEditor({ onClose }) {
   };
 
   
-
+  if (loading) {
+    return <div className="loading">Завантаження...</div>;
+  }
   return (
     <div className="editor">
+      <div className="banner-upload-section">
+        {formBanner && <img src={formBanner} alt="Banner" className="form-banner-preview" />}
+        <label className="upload-label">
+          {formBanner ? "🔄 Змінити банер" : "🖼️ Додати банер форми"}
+          <input type="file" accept="image/*" onChange={handleBannerChange} style={{ display: "none" }} />
+        </label>
+        {formBanner && (
+          <button className="delete-img-btn" onClick={() => setFormBanner("")}>Видалити банер</button>
+        )}
+      </div>
       {/* HEADER */}
       <div className="editor-header">
         <div className="title-section">
@@ -136,6 +187,24 @@ export default function FormEditor({ onClose }) {
                   setQuestions(newQ);
                 }}
               />
+              {/* Кнопка додавання фото до питання */}
+                <label className="icon-btn-upload">
+                  📷
+                  <input type="file" accept="image/*" onChange={(e) => handleQuestionImageChange(e, i)} style={{ display: "none" }} />
+                </label>
+
+              {/* Відображення завантаженого фото у питанні */}
+              {q.image && (
+                <div className="question-image-container">
+                  <img src={q.image} alt="Question" className="question-img-preview" />
+                  <button className="delete-img-btn" onClick={() => {
+                    const newQ = [...questions];
+                    newQ[i].image = ""; // Видаляємо лінк
+                    setQuestions(newQ);
+                  }}>Видалити фото</button>
+                </div>
+              )}
+              
 
               {q.type !== "text" && (
                 <div className="options">
