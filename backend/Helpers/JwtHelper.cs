@@ -17,10 +17,10 @@ public class JwtHelper
 
     public string GenerateAccessToken(Guid userId, string email)
     {
+        var secretKey = Environment.GetEnvironmentVariable("JWT_SECRET") ?? throw new InvalidOperationException("JWT_SECRET not configured");
+        var issuer = Environment.GetEnvironmentVariable("JWT_ISSUER") ?? "FormBuilderAPI";
+        var audience = Environment.GetEnvironmentVariable("JWT_AUDIENCE") ?? "FormBuilderClient";
         var jwtSettings = _configuration.GetSection("JwtSettings");
-        var secretKey = jwtSettings["SecretKey"] ?? throw new InvalidOperationException("JWT SecretKey not configured");
-        var issuer = jwtSettings["Issuer"];
-        var audience = jwtSettings["Audience"];
         var expirationMinutes = int.Parse(jwtSettings["AccessTokenExpirationMinutes"] ?? "15");
 
         var claims = new[]
