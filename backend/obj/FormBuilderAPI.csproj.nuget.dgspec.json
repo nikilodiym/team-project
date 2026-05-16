@@ -1,23 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "F:\\VS\\side-projects\\final-project\\team-project\\backend\\FormBuilderAPI.csproj": {}
+    "C:\\Users\\nikit\\team-project\\backend\\FormBuilderAPI.csproj": {}
   },
   "projects": {
-    "F:\\VS\\side-projects\\final-project\\team-project\\backend\\FormBuilderAPI.csproj": {
+    "C:\\Users\\nikit\\team-project\\backend\\FormBuilderAPI.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "F:\\VS\\side-projects\\final-project\\team-project\\backend\\FormBuilderAPI.csproj",
+        "projectUniqueName": "C:\\Users\\nikit\\team-project\\backend\\FormBuilderAPI.csproj",
         "projectName": "FormBuilderAPI",
-        "projectPath": "F:\\VS\\side-projects\\final-project\\team-project\\backend\\FormBuilderAPI.csproj",
-        "packagesPath": "C:\\Users\\пк\\.nuget\\packages\\",
-        "outputPath": "F:\\VS\\side-projects\\final-project\\team-project\\backend\\obj\\",
+        "projectPath": "C:\\Users\\nikit\\team-project\\backend\\FormBuilderAPI.csproj",
+        "packagesPath": "C:\\Users\\nikit\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\nikit\\team-project\\backend\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\пк\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\nikit\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -92,6 +92,24 @@
           ],
           "assetTargetFallback": true,
           "warn": true,
+          "downloadDependencies": [
+            {
+              "name": "Microsoft.AspNetCore.App.Ref",
+              "version": "[8.0.23, 8.0.23]"
+            },
+            {
+              "name": "Microsoft.NETCore.App.Host.win-x64",
+              "version": "[8.0.23, 8.0.23]"
+            },
+            {
+              "name": "Microsoft.NETCore.App.Ref",
+              "version": "[8.0.23, 8.0.23]"
+            },
+            {
+              "name": "Microsoft.WindowsDesktop.App.Ref",
+              "version": "[8.0.23, 8.0.23]"
+            }
+          ],
           "frameworkReferences": {
             "Microsoft.AspNetCore.App": {
               "privateAssets": "none"
@@ -100,7 +118,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.103/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.102/PortableRuntimeIdentifierGraph.json"
         }
       }
     }
