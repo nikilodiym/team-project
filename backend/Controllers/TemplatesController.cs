@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
-using System.Security.Claims;
 using FormBuilderAPI.Data;
+using FormBuilderAPI.Helpers;
 using FormBuilderAPI.Models.Entities;
 using FormBuilderAPI.Models.DTOs.Templates;
 
@@ -59,8 +59,8 @@ public class TemplatesController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] TemplateCreateDto dto)
     {
-        var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        if (!Guid.TryParse(userIdClaim, out var userId))
+        var userId = UserClaimsHelper.GetUserId(User);
+        if (userId == null)
             return Unauthorized();
 
         var template = new Template
@@ -70,7 +70,7 @@ public class TemplatesController : ControllerBase
             Category = dto.Category,
             ThumbnailUrl = dto.ThumbnailUrl,
             IsPublic = dto.IsPublic,
-            CreatedById = userId,
+            CreatedById = userId.Value,
             Questions = dto.Questions.Select((q, qi) => new TemplateQuestion
             {
                 Title = q.Title,
@@ -96,8 +96,8 @@ public class TemplatesController : ControllerBase
     [HttpPost("{id}/use")]
     public async Task<IActionResult> UseTemplate(Guid id)
     {
-        var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        if (!Guid.TryParse(userIdClaim, out var userId))
+        var userId = UserClaimsHelper.GetUserId(User);
+        if (userId == null)
             return Unauthorized();
 
         var template = await _context.Templates
@@ -112,7 +112,8 @@ public class TemplatesController : ControllerBase
         {
             Title = template.Title,
             Description = template.Description,
-            OwnerId = userId,
+            OwnerId = userId.Value,
+            ThumbnailUrl = template.ThumbnailUrl,
             Status = "draft",
             Questions = template.Questions.Select(q => new Question
             {
@@ -140,15 +141,15 @@ public class TemplatesController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(Guid id)
     {
-        var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        if (!Guid.TryParse(userIdClaim, out var userId))
+        var userId = UserClaimsHelper.GetUserId(User);
+        if (userId == null)
             return Unauthorized();
 
         var template = await _context.Templates.FindAsync(id);
         if (template == null)
             return NotFound();
 
-        if (template.CreatedById != userId)
+        if (template.CreatedById != userId.Value)
             return Forbid();
 
         _context.Templates.Remove(template);

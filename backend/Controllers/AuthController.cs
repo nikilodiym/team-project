@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
-using System.Security.Claims;
+using FormBuilderAPI.Data;
+using FormBuilderAPI.Helpers;
 using FormBuilderAPI.Services;
 using FormBuilderAPI.Models.DTOs.Auth;
 
@@ -11,10 +12,12 @@ namespace FormBuilderAPI.Controllers;
 public class AuthController : ControllerBase
 {
     private readonly IAuthService _authService;
+    private readonly AppDbContext _context;
 
-    public AuthController(IAuthService authService)
+    public AuthController(IAuthService authService, AppDbContext context)
     {
         _authService = authService;
+        _context = context;
     }
 
     [HttpPost("register")]
@@ -63,32 +66,32 @@ public class AuthController : ControllerBase
     [HttpPost("logout")]
     public async Task<IActionResult> Logout()
     {
-        var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        if (userIdClaim == null || !Guid.TryParse(userIdClaim, out var userId))
-        {
+        var userId = UserClaimsHelper.GetUserId(User);
+        if (userId == null)
             return Unauthorized();
-        }
 
-        await _authService.LogoutAsync(userId);
+        await _authService.LogoutAsync(userId.Value);
         return Ok(new { message = "Logged out successfully" });
     }
 
     [Authorize]
     [HttpGet("me")]
-    public IActionResult GetCurrentUser()
+    public async Task<IActionResult> GetCurrentUser()
     {
-        var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        var emailClaim = User.FindFirst(ClaimTypes.Email)?.Value;
-
-        if (userIdClaim == null || emailClaim == null)
-        {
+        var userId = UserClaimsHelper.GetUserId(User);
+        if (userId == null)
             return Unauthorized();
-        }
 
-        return Ok(new
+        var user = await _context.Users.FindAsync(userId.Value);
+        if (user == null)
+            return Unauthorized();
+
+        return Ok(new UserDto
         {
-            id = userIdClaim,
-            email = emailClaim
+            Id = user.Id,
+            Email = user.Email,
+            DisplayName = user.DisplayName,
+            PhotoUrl = user.PhotoUrl
         });
     }
 }

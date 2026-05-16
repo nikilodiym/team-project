@@ -99,6 +99,10 @@ namespace FormBuilderAPI.Migrations
                         .HasMaxLength(20)
                         .HasColumnType("character varying(20)");
 
+                    b.Property<string>("ThumbnailUrl")
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)");
+
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(255)

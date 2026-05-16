@@ -10,26 +10,29 @@ import Features from "./screens/FeaturesPage/Features";
 import Contact from "./screens/ContactPage/Contact";
 import Dashboard from "./screens/DashboardPage/Dashboard";
 import Results from "./screens/ResultsPage/Results";
+import Login from "./screens/AuthPage/Login";
+import { AuthProvider } from "./context/AuthContext";
 
 function App() {
   return (
-    <BrowserRouter>
-      <Header />
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/FAQ" element={<FAQ />} />
-        {/* Додаємо :id, щоб React розумів динамічні посилання */}
-        <Route path="/editor/:id" element={<FormEditor />} />
-        {/* Маршрут для створення нової форми */}
-        <Route path="/editor" element={<FormEditor />} />
-        <Route path="/templates" element={<Templates />} />
-        <Route path="/settings" element={<Settings />} />
-        <Route path="/features" element={<Features />} />
-        <Route path="/contact" element={<Contact />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/results" element={<Results />} />
-      </Routes>
-    </BrowserRouter>
+    <AuthProvider>
+      <BrowserRouter>
+        <Header />
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/FAQ" element={<FAQ />} />
+          <Route path="/editor/:id" element={<FormEditor />} />
+          <Route path="/editor" element={<FormEditor />} />
+          <Route path="/templates" element={<Templates />} />
+          <Route path="/settings" element={<Settings />} />
+          <Route path="/features" element={<Features />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/results" element={<Results />} />
+        </Routes>
+      </BrowserRouter>
+    </AuthProvider>
   );
 }
 

@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
-using System.Security.Claims;
 using FormBuilderAPI.Data;
+using FormBuilderAPI.Helpers;
 using FormBuilderAPI.Models.DTOs.Responses;
 
 namespace FormBuilderAPI.Controllers;
@@ -21,8 +21,10 @@ public class ResponsesController : ControllerBase
 
     private Guid GetUserId()
     {
-        var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        return Guid.Parse(userIdClaim!);
+        var userId = UserClaimsHelper.GetUserId(User);
+        if (userId == null)
+            throw new UnauthorizedAccessException();
+        return userId.Value;
     }
 
     [HttpGet]

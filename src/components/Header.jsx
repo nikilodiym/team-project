@@ -1,24 +1,24 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import "./Header.css";
 import { Menu, Search, Grid3X3, X } from "lucide-react";
-import logo from "../assets/Google_Forms_logo_(2014-2020).svg.png"
-import { auth, loginWithGoogle, logout } from "../firebase";
-
-import { onAuthStateChanged } from "firebase/auth";
+import { Link, useNavigate } from "react-router-dom";
+import logo from "../assets/Google_Forms_logo_(2014-2020).svg.png";
+import { useAuth } from "../context/AuthContext";
 
 export default function Header() {
   const [open, setOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
+  const { user, logout, isAuthenticated } = useAuth();
+  const navigate = useNavigate();
 
-  const [user, setUser] = useState(null);
+  const handleLogout = async () => {
+    await logout();
+    setProfileOpen(false);
+    navigate("/");
+  };
 
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      setUser(currentUser);
-    });
-
-    return () => unsubscribe();
-  }, []);
+  const avatarUrl = user?.photoUrl;
+  const displayName = user?.displayName || user?.email;
 
   return (
     <>
@@ -27,55 +27,68 @@ export default function Header() {
           <Menu className="icon" onClick={() => setOpen(true)} />
 
           <div className="logo-block">
-            <div><img src={logo} alt="logo" className="logo" /></div>
-
+            <div>
+              <img src={logo} alt="logo" className="logo" />
+            </div>
             <h1>Форми</h1>
           </div>
         </div>
 
         <div className="search-block">
           <Search className="search-icon" />
-
           <input type="text" placeholder="Пошук" />
         </div>
 
         <div className="header-right">
           <Grid3X3 className="icon" />
 
-          {!user ? (
-            <button className="login-btn" onClick={loginWithGoogle}>
-              Login with Google
-            </button>
+          {!isAuthenticated ? (
+            <Link to="/login" className="login-btn">
+              Увійти
+            </Link>
           ) : (
             <div className="profile-wrapper">
-              <img
-                src={user.photoURL}
-                alt="avatar"
-                className="avatar"
-                onClick={() => setProfileOpen(!profileOpen)}
-              />
+              {avatarUrl ? (
+                <img
+                  src={avatarUrl}
+                  alt="avatar"
+                  className="avatar"
+                  onClick={() => setProfileOpen(!profileOpen)}
+                />
+              ) : (
+                <button
+                  type="button"
+                  className="avatar avatar-placeholder"
+                  onClick={() => setProfileOpen(!profileOpen)}
+                >
+                  {displayName?.[0]?.toUpperCase() || "U"}
+                </button>
+              )}
 
               {profileOpen && (
                 <div className="profile-menu">
                   <div className="profile-info">
-                    <img src={user.photoURL} alt="" />
-
+                    {avatarUrl ? <img src={avatarUrl} alt="" /> : <div className="avatar avatar-placeholder">{displayName?.[0]}</div>}
                     <div>
-                      <h4>{user.displayName}</h4>
-
-                      <p>{user.email}</p>
+                      <h4>{displayName}</h4>
+                      <p>{user?.email}</p>
                     </div>
                   </div>
 
-                  <a href="/dashboard">Dashboard</a>
+                  <Link to="/dashboard" onClick={() => setProfileOpen(false)}>
+                    Dashboard
+                  </Link>
+                  <Link to="/editor" onClick={() => setProfileOpen(false)}>
+                    Create Form
+                  </Link>
+                  <Link to="/results" onClick={() => setProfileOpen(false)}>
+                    Results / Analytics
+                  </Link>
+                  <Link to="/settings" onClick={() => setProfileOpen(false)}>
+                    Settings
+                  </Link>
 
-                  <a href="/editor">Create Form</a>
-
-                  <a href="/results">Results / Analytics</a>
-
-                  <a href="/settings">Settings</a>
-
-                  <button onClick={logout} className="logout-btn">
+                  <button type="button" onClick={handleLogout} className="logout-btn">
                     Logout
                   </button>
                 </div>
@@ -85,24 +98,30 @@ export default function Header() {
         </div>
       </header>
 
-      <div
-        className={`overlay ${open ? "active" : ""}`}
-        onClick={() => setOpen(false)}
-      ></div>
+      <div className={`overlay ${open ? "active" : ""}`} onClick={() => setOpen(false)} />
 
       <div className={`sidebar ${open ? "open" : ""}`}>
         <div className="sidebar-top">
           <h2>Меню</h2>
-
           <X className="close-icon" onClick={() => setOpen(false)} />
         </div>
 
         <nav className="sidebar-links">
-          <a href="/">Home</a>
-          <a href="/features">Features</a>
-          <a href="/FAQ">FAQ</a>
-          <a href="/contact">Contact</a>
-          <a href="/templates">Templates</a>
+          <Link to="/" onClick={() => setOpen(false)}>
+            Home
+          </Link>
+          <Link to="/features" onClick={() => setOpen(false)}>
+            Features
+          </Link>
+          <Link to="/FAQ" onClick={() => setOpen(false)}>
+            FAQ
+          </Link>
+          <Link to="/contact" onClick={() => setOpen(false)}>
+            Contact
+          </Link>
+          <Link to="/templates" onClick={() => setOpen(false)}>
+            Templates
+          </Link>
         </nav>
       </div>
     </>

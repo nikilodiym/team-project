@@ -14,6 +14,9 @@ public class Form
 
     public string? Description { get; set; }
 
+    [MaxLength(1000)]
+    public string? ThumbnailUrl { get; set; }
+
     [Required]
     public Guid OwnerId { get; set; }
 

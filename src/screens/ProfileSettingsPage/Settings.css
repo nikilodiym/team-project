@@ -184,3 +184,13 @@
     gap: 10px;
   }
 }
+
+.settings-avatar-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #7047eb;
+  color: white;
+  font-size: 32px;
+  font-weight: 500;
+}

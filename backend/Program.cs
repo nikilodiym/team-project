@@ -27,6 +27,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 // Add Services
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<JwtHelper>();
+builder.Services.AddSingleton<IBlobStorageService, BlobStorageService>();
 
 // Add Controllers
 builder.Services.AddControllers();
@@ -55,6 +56,7 @@ builder.Services.AddAuthentication(options =>
 })
 .AddJwtBearer(options =>
 {
+    options.MapInboundClaims = false;
     options.TokenValidationParameters = new TokenValidationParameters
     {
         ValidateIssuer = true,
@@ -91,5 +93,13 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    db.Database.Migrate();
+    db.Database.ExecuteSqlRaw(
+        """ALTER TABLE "Forms" ADD COLUMN IF NOT EXISTS "ThumbnailUrl" character varying(1000) NULL;""");
+}
 
 app.Run();

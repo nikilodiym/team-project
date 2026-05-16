@@ -28,7 +28,7 @@ export default function Features() {
         <div className="feature-card">
           <Shield className="icon" />
           <h3>Безпека даних</h3>
-          <p>Усі відповіді надійно зберігаються у Firebase.</p>
+          <p>Усі відповіді надійно зберігаються в Azure PostgreSQL.</p>
         </div>
 
         <div className="feature-card">

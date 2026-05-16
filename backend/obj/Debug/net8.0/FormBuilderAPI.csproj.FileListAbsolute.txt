@@ -118,3 +118,9 @@ F:\VS\side-projects\final-project\team-project\backend\obj\Debug\net8.0\FormBuil
 F:\VS\side-projects\final-project\team-project\backend\obj\Debug\net8.0\ref\FormBuilderAPI.dll
 F:\VS\side-projects\final-project\team-project\backend\bin\Debug\net8.0\DotNetEnv.dll
 F:\VS\side-projects\final-project\team-project\backend\bin\Debug\net8.0\Superpower.dll
+F:\VS\side-projects\final-project\team-project\backend\bin\Debug\net8.0\Azure.Core.dll
+F:\VS\side-projects\final-project\team-project\backend\bin\Debug\net8.0\Azure.Storage.Blobs.dll
+F:\VS\side-projects\final-project\team-project\backend\bin\Debug\net8.0\Azure.Storage.Common.dll
+F:\VS\side-projects\final-project\team-project\backend\bin\Debug\net8.0\System.ClientModel.dll
+F:\VS\side-projects\final-project\team-project\backend\bin\Debug\net8.0\System.IO.Hashing.dll
+F:\VS\side-projects\final-project\team-project\backend\bin\Debug\net8.0\System.Memory.Data.dll
