@@ -2,23 +2,68 @@ import React, { useEffect, useState } from "react";
 import "./Header.css";
 import { Menu, Search, Grid3X3, X } from "lucide-react";
 import logo from "../assets/Google_Forms_logo_(2014-2020).svg.png"
-import { auth, loginWithGoogle, logout } from "../firebase";
+import { auth, loginWithGoogle, logout, db } from "../firebase";
 
 import { onAuthStateChanged } from "firebase/auth";
+import { collection, getDocs, query, where } from "firebase/firestore";
 
 export default function Header() {
   const [open, setOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState([]);
+  const [forms, setForms] = useState([]);
 
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       setUser(currentUser);
+
+      if (currentUser) {
+        await fetchUserForms(currentUser.uid);
+      }
     });
 
     return () => unsubscribe();
   }, []);
+
+  const fetchUserForms = async (uid) => {
+    try {
+      const q = query(collection(db, "forms"), where("ownerId", "==", uid));
+      const snap = await getDocs(q);
+
+      const data = snap.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+
+      setForms(data);
+    } catch (err) {
+      console.log("Error loading forms:", err);
+    }
+  };
+
+  const handleSearch = (value) => {
+    setSearchQuery(value);
+
+    if (value.trim() === "") {
+      setSearchResults([]);
+    } else {
+      const results = forms.filter(
+        (form) =>
+          form.title?.toLowerCase().includes(value.toLowerCase()) ||
+          form.description?.toLowerCase().includes(value.toLowerCase())
+      );
+      setSearchResults(results.slice(0, 5));
+    }
+  };
+
+  const handleSelectResult = (formId) => {
+    window.location.href = `/editor/${formId}`;
+    setSearchQuery("");
+    setSearchResults([]);
+  };
 
   return (
     <>
@@ -36,7 +81,29 @@ export default function Header() {
         <div className="search-block">
           <Search className="search-icon" />
 
-          <input type="text" placeholder="Пошук" />
+          <input
+            type="text"
+            placeholder="Пошук"
+            value={searchQuery}
+            onChange={(e) => handleSearch(e.target.value)}
+          />
+
+          {searchResults.length > 0 && (
+            <div className="search-results">
+              {searchResults.map((form) => (
+                <div
+                  key={form.id}
+                  className="search-result-item"
+                  onClick={() => handleSelectResult(form.id)}
+                >
+                  <div>
+                    <h4>{form.title}</h4>
+                    <p>{form.description}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
 
         <div className="header-right">

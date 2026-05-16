@@ -58,7 +58,9 @@ export const saveFormToFirestore = async (
       title: formTitle,
       questions: questions,
 
+      // Keep legacy userId and add ownerId for new queries
       userId: user.uid,
+      ownerId: user.uid,
       userName: user.displayName,
       userEmail: user.email,
 

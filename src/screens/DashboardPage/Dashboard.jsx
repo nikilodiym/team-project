@@ -11,6 +11,7 @@ export default function Dashboard() {
 
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, async (currentUser) => {
+      console.log("👤 Dashboard auth state:", currentUser?.uid);
       setUser(currentUser);
 
       if (currentUser) {
@@ -25,8 +26,18 @@ export default function Dashboard() {
 
   const fetchForms = async (uid) => {
     try {
+      // Primary query: ownerId (new documents)
       const q = query(collection(db, "forms"), where("ownerId", "==", uid));
-      const snap = await getDocs(q);
+      let snap = await getDocs(q);
+      console.log("📋 Dashboard found by ownerId:", snap.docs.length);
+
+      // Fallback: some older docs may use `userId` instead of `ownerId`.
+      if (snap.empty) {
+        const q2 = query(collection(db, "forms"), where("userId", "==", uid));
+        const snap2 = await getDocs(q2);
+        console.log("📋 Dashboard found by userId:", snap2.docs.length);
+        snap = snap2;
+      }
 
       const data = snap.docs.map((doc) => ({
         id: doc.id,
