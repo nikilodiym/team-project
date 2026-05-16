@@ -189,7 +189,7 @@ export default function FormEditor({ onClose }) {
               />
               {/* Кнопка додавання фото до питання */}
                 <label className="icon-btn-upload">
-                  📷
+                  📷 Додати фото
                   <input type="file" accept="image/*" onChange={(e) => handleQuestionImageChange(e, i)} style={{ display: "none" }} />
                 </label>
 
