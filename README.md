@@ -108,6 +108,8 @@ src/ → frontend
 public/ → static files
 docs/ → documentation
 
+<img width="1408" height="768" alt="image" src="https://github.com/user-attachments/assets/8edc8154-2d9e-4999-9784-60131b410c6f" />
+
 
 ---
 
